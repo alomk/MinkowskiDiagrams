@@ -12,15 +12,15 @@ gamma = math.sqrt(1/(1-(beta**2)))
 print gamma
 
 lorentz = np.zeros(shape=(2,2))
-lorentz[0] = [gamma,-gamma*beta]
+lorentz[0] = [gamma,-gamma*beta]#lorentz transformation matrix
 lorentz[1] = [-gamma*beta,gamma]
 print lorentz
 
-invlorentz = np.linalg.inv(lorentz)
+invlorentz = np.linalg.inv(lorentz) #matrix for inverting the lorentz transformation
 
 x_pts = []
 y_pts = []
-
+#need these constants for the checkboxes
 observerGridEnabled = True
 travelerGridEnabled = False
 lightConesEnabled = False
@@ -31,7 +31,7 @@ def drawMinkowski():
     global ax1
     global ax2
 
-
+#where transofmration functions are used
     def tr(x,y):
         x,y = np.asarray(x), np.asarray(y)
         return lorentz[0][0]*x + lorentz[0][1]*y, lorentz[1][0]*x + lorentz[1][1]*y
@@ -42,14 +42,14 @@ def drawMinkowski():
     ax1 = Subplot(fig, 1, 1, 1, grid_helper=grid_helper)
     
     fig.add_subplot(ax1)
-
-    xx,yy = tr([3,6],[5.0,10.])
+#this is how you graph a line but its commented out
+    #xx,yy = tr([3,6],[5.0,10.])
     #ax1.plot(xx, yy)
-    
+    #this part is for moving the whole axes over so theres room for the things on the side
     pos1 = ax1.get_position()
     pos2 = [pos1.x0 + 0.09, pos1.y0,  pos1.width, pos1.height]
     ax1.set_position(pos2)
-
+#setting ax1 constants
     ax1.set_aspect(1.)
     ax1.set_xlim(-10,10.)
     ax1.set_ylim(-10,10.)
@@ -60,7 +60,7 @@ def drawMinkowski():
     ax1.grid(travelerGridEnabled)
     ax1.set_xlabel("x'")
     ax1.set_ylabel("ct'")
-
+#ax2 things
     ax2 = fig.add_axes(ax1.get_position(), frameon=False)
     ax2.xaxis.set_ticks_position('top')
     ax2.yaxis.set_ticks_position('right')
@@ -74,7 +74,7 @@ def drawMinkowski():
     ax2.set_ylabel("ct")
     ax2.yaxis.set_label_position('right')
     ax2.grid(observerGridEnabled)
-
+#checkbox things
 fig = plt.figure()
 rax = plt.axes([0.01, 0.01, 0.23, 0.28])
 check = CheckButtons(rax, ('Observers grid', 'Travelers grid', 'Light Cones'), (observerGridEnabled, travelerGridEnabled, lightConesEnabled))
@@ -100,7 +100,7 @@ def checkBoxes(lbl):
         drawMinkowski()
     plt.draw()
 
-
+#this is if you want to change v
 def recalculateConstants(b): #takes beta
     
     global beta
@@ -124,6 +124,11 @@ def recalculateConstants(b): #takes beta
 
     invlorentz = np.linalg.inv(lorentz)
 
+#doing thsi rn
+def drawLightCone(x,y): #about what point
+    
+
+#this is picking points
 def onpick(event):
     m_x, m_y = event.x, event.y
     x, y = ax2.transData.inverted().transform([m_x, m_y])
