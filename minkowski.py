@@ -47,7 +47,7 @@ def drawMinkowski():
     #ax1.plot(xx, yy)
     
     pos1 = ax1.get_position()
-    pos2 = [pos1.x0 + 0.1, pos1.y0,  pos1.width, pos1.height]
+    pos2 = [pos1.x0 + 0.09, pos1.y0,  pos1.width, pos1.height]
     ax1.set_position(pos2)
 
     ax1.set_aspect(1.)
@@ -99,7 +99,6 @@ def checkBoxes(lbl):
         ax2.remove()
         drawMinkowski()
     plt.draw()
-    fig.canvas.draw()
 
 
 def recalculateConstants(b): #takes beta
