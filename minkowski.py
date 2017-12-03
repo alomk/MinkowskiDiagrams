@@ -3,7 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from mpl_toolkits.axisartist.grid_helper_curvelinear import GridHelperCurveLinear
 from mpl_toolkits.axisartist import Subplot
-from matplotlib.widgets import CheckButtons
+from matplotlib.widgets import CheckButtons,Slider,Button
 
 c = 299800000 #speed of light
 velocity = -0.4*c #set to whatever you want homie
@@ -20,6 +20,7 @@ invlorentz = np.linalg.inv(lorentz) #matrix for inverting the lorentz transforma
 
 x_pts = []
 y_pts = []
+cones = []
 #need these constants for the checkboxes
 observerGridEnabled = True
 travelerGridEnabled = False
@@ -83,6 +84,7 @@ def checkBoxes(lbl):
     global observerGridEnabled
     global travelerGridEnabled
     global lightConesEnabled
+    global cones
 
     if lbl == "Observers grid":
         print "toggling observers grid"
@@ -94,11 +96,28 @@ def checkBoxes(lbl):
         ax1.grid(travelerGridEnabled)
     elif lbl == "Light Cones":
         print "toggling light cones"
-        recalculateConstants(0.25);
-        ax1.remove()
-        ax2.remove()
-        drawMinkowski()
+        if lightConesEnabled:
+            for cone in cones:
+                for i in cone[0]:
+                    i.remove()
+                for i in cone[1]:
+                    i.remove()
+            cones = []
+        else:
+            for i in range(len(x_pts)):
+                cones.append(drawLightCone(x_pts[i],y_pts[i]))
+
+        lightConesEnabled = not lightConesEnabled
     plt.draw()
+
+
+def slider(v):
+    recalculateConstants(v/c)
+    ax1.remove()
+    ax2.remove()
+    drawMinkowski()
+    plt.draw()
+
 
 #this is if you want to change v
 def recalculateConstants(b): #takes beta
@@ -126,17 +145,38 @@ def recalculateConstants(b): #takes beta
 
 #doing thsi rn
 def drawLightCone(x,y): #about what point
-    
+    i = np.linspace(*ax2.get_xlim())
+    return (ax2.plot(i, i-x+y,"r--"), ax2.plot(i,-(i-x) + y,'r--'))
+   
 
 #this is picking points
 def onpick(event):
+    #tryna avoid any unnecessary errors here
+    if(lightConesEnabled):
+        return
     m_x, m_y = event.x, event.y
     x, y = ax2.transData.inverted().transform([m_x, m_y])
-    x_pts.append(x)
-    y_pts.append(y)
-    print "x%d y%d" % (x,y) 
+    if x >= -10 and x <= 10 and y >= -10 and y <= 10:
+        x_pts.append(x)
+        y_pts.append(y)
+        print "x%d y%d" % (x,y) 
     ax2.scatter(x_pts,y_pts)
     fig.canvas.draw()
+
+def on_button_clicked(event):
+    
+    global x_pts
+    global y_pts
+
+    print "button clicked"
+    x_pts = []
+    y_pts = []
+    #ax2.scatter.remove()
+
+axnext = plt.axes([0.03, 0.4, 0.1, 0.075])
+but = Button(axnext, 'Clear events')
+but.on_clicked(on_button_clicked)
+
 
 fig.canvas.mpl_connect('button_press_event', onpick)
 
