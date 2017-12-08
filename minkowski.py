@@ -173,14 +173,29 @@ def on_button_clicked(event):
     y_pts = []
     #ax2.scatter.remove()
 
+def change_B(newB):
+    observerGridEnabled = True
+    travelerGridEnabled = False
+    lightConesEnabled = False
+    x_pts = []
+    y_pts = []
+    recalculateConstants(newB)
+    ax1.remove()
+    ax2.remove()
+    drawMinkowski()
+
+
 axnext = plt.axes([0.03, 0.4, 0.1, 0.075])
 but = Button(axnext, 'Clear events')
 but.on_clicked(on_button_clicked)
 
+axSlider = plt.axes([0.07,0.6,0.09,0.02],facecolor="pink")
+velSlider = Slider(axSlider, 'Beta', 0.1,0.99,valinit=0.4)
+velSlider.on_changed(change_B)
 
 fig.canvas.mpl_connect('button_press_event', onpick)
 
 check.on_clicked(checkBoxes)
 
-drawMinkowski();
+drawMinkowski()
 plt.show()
