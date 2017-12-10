@@ -1,9 +1,16 @@
 import math
 import numpy as np
 import matplotlib.pyplot as plt
-from mpl_toolkits.axisartist.grid_helper_curvelinear import GridHelperCurveLinear
-from mpl_toolkits.axisartist import Subplot
-from matplotlib.widgets import CheckButtons,Slider,Button
+#from mpl_toolkits.axisartist.grid_helper_curvelinear import GridHelperCurveLinear
+import importlib
+helper = importlib.import_module('mpl_toolkits.axisartist.grid_helper_curvelinear').GridHelperCurveLinear
+#from mpl_toolkits.axisartist import Subplot
+#from matplotlib.widgets import CheckButtons,Slider,Button
+SubPlotModule = importlib.import_module('mpl_toolkits.axisartist').Subplot
+CheckButtonsModule = importlib.import_module("matplotlib.widgets").CheckButtons
+SliderModule = importlib.import_module("matplotlib.widgets").Slider
+ButtonModule = importlib.import_module("matplotlib.widgets").Button
+
 
 c = 299800000 #speed of light
 velocity = -0.4*c #set to whatever you want homie
@@ -39,8 +46,9 @@ def drawMinkowski():
     def inv_tr(x,y):
         return invlorentz[0][0]*x + invlorentz[0][1]*y, invlorentz[1][0]*x + invlorentz[1][1]*y
 
-    grid_helper = GridHelperCurveLinear((tr,inv_tr))
-    ax1 = Subplot(fig, 1, 1, 1, grid_helper=grid_helper)
+    #grid_helper = GridHelperCurveLinear((tr,inv_tr))
+    grid_helper = helper((tr,inv_tr))
+    ax1 = SubPlotModule(fig, 1, 1, 1, grid_helper=grid_helper)
     
     fig.add_subplot(ax1)
 #this is how you graph a line but its commented out
@@ -74,11 +82,12 @@ def drawMinkowski():
     ax2.xaxis.set_label_position('top')
     ax2.set_ylabel("ct")
     ax2.yaxis.set_label_position('right')
+    plt.text(-20, 10, 'made by kazi and anish', style='italic')
     ax2.grid(observerGridEnabled)
 #checkbox things
 fig = plt.figure()
 rax = plt.axes([0.01, 0.01, 0.23, 0.28])
-check = CheckButtons(rax, ('Observers grid', 'Travelers grid', 'Light Cones'), (observerGridEnabled, travelerGridEnabled, lightConesEnabled))
+check = CheckButtonsModule(rax, ('Observers grid', 'Travelers grid', 'Light Cones'), (observerGridEnabled, travelerGridEnabled, lightConesEnabled))
 def checkBoxes(lbl):
 
     global observerGridEnabled
@@ -186,11 +195,11 @@ def change_B(newB):
 
 
 axnext = plt.axes([0.03, 0.4, 0.1, 0.075])
-but = Button(axnext, 'Clear events')
+but = ButtonModule(axnext, 'Clear events')
 but.on_clicked(on_button_clicked)
 
 axSlider = plt.axes([0.07,0.6,0.09,0.02],facecolor="pink")
-velSlider = Slider(axSlider, 'Beta', 0.1,0.99,valinit=0.4)
+velSlider = SliderModule(axSlider, 'Beta', 0.001,0.9999,valinit=0.4)
 velSlider.on_changed(change_B)
 
 fig.canvas.mpl_connect('button_press_event', onpick)
